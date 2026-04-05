@@ -29,6 +29,12 @@
                 background-color: #faf6f1;
                 font-family: 'Noto Serif Georgian', 'Cormorant Garamond', serif;
                 color: #3a3028;
+                transition: background-color 1.5s ease, color 1.5s ease;
+            }
+
+            body.night-mode .page-content {
+                background-color: #141428;
+                color: #d4cfc8;
             }
 
             .page-content.bg-visible {
@@ -46,7 +52,37 @@
                 text-align: center;
                 padding: 2rem 1.5rem;
                 overflow: hidden;
-                background: url('bg2.jpg') center center / cover no-repeat;
+            }
+
+            /* Day/Night background layers */
+            .hero-bg {
+                position: absolute;
+                inset: -20% 0;
+                background-size: cover;
+                background-position: center center;
+                background-repeat: no-repeat;
+                z-index: 0;
+                will-change: transform;
+            }
+
+            .hero-bg.day {
+                background-image: url('bg2.jpg');
+                opacity: 1;
+                transition: opacity 1.5s ease;
+            }
+
+            .hero-bg.night {
+                background-image: url('bg2-night.jpg');
+                opacity: 0;
+                transition: opacity 1.5s ease;
+            }
+
+            body.night-mode .hero-bg.day { opacity: 0; }
+            body.night-mode .hero-bg.night { opacity: 1; }
+
+            @media (max-width: 768px) {
+                .hero-bg.day { background-image: url('bg2-mobile.jpg'); }
+                .hero-bg.night { background-image: url('bg2-night-mobile.jpg'); }
             }
 
             .hero::before {
@@ -54,26 +90,84 @@
                 position: absolute;
                 inset: 0;
                 background: rgba(250, 246, 241, 0.72);
-                z-index: 0;
+                z-index: 1;
+                transition: background 1.5s ease;
             }
 
-            .hero > * {
+            body.night-mode .hero::before {
+                background: rgba(10, 10, 30, 0.55);
+            }
+
+            .hero > *:not(.hero-bg) {
                 position: relative;
-                z-index: 1;
+                z-index: 2;
                 opacity: 0;
                 transform: translateY(15px);
                 transition: opacity 3s ease, transform 2s ease;
             }
 
-            .page-content.content-revealed .hero > * {
+            .page-content.content-revealed .hero > *:not(.hero-bg) {
                 opacity: 1;
                 transform: translateY(0);
             }
 
-            @media (max-width: 768px) {
-                .hero {
-                    background-image: url('bg2-mobile.jpg');
-                }
+            /* Day/Night iOS-style toggle */
+            .day-night-toggle {
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
+                z-index: 150;
+                width: 56px;
+                height: 30px;
+                border-radius: 15px;
+                border: none;
+                background: #e8e0d4;
+                cursor: pointer;
+                padding: 0;
+                transition: background 0.4s ease, opacity 0.8s ease;
+                box-shadow: inset 0 1px 3px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1);
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .day-night-toggle.visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .day-night-toggle .toggle-knob {
+                position: absolute;
+                top: 3px;
+                left: 3px;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: #fff;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.8rem;
+                line-height: 1;
+            }
+
+            .day-night-toggle .toggle-knob::after {
+                content: '☀️';
+                font-size: 0.75rem;
+            }
+
+            body.night-mode .day-night-toggle {
+                background: #2c2c5e;
+            }
+
+            body.night-mode .day-night-toggle .toggle-knob {
+                transform: translateX(26px);
+                background: #1a1a3a;
+            }
+
+            body.night-mode .day-night-toggle .toggle-knob::after {
+                content: '🌙';
             }
 
             .hero-photo {
@@ -91,6 +185,7 @@
 
             .hero-photo img {
                 width:100%;
+                height: 100%;
             }
 
             .hero-names {
@@ -100,6 +195,11 @@
                 letter-spacing: 0.06em;
                 line-height: 1.15;
                 color: #3f5e88;
+                transition: color 1.5s ease;
+            }
+
+            body.night-mode .hero-names {
+                color: #c8d8f0;
             }
 
             .hero-names .amp {
@@ -109,6 +209,11 @@
                 letter-spacing: 0.15em;
                 color: #c9b26e;
                 margin: 0.15em 0;
+                transition: color 1.5s ease;
+            }
+
+            body.night-mode .hero-names .amp {
+                color: #e0c96e;
             }
 
             .hero-date {
@@ -118,6 +223,11 @@
                 text-transform: uppercase;
                 color: #5f7ca5;
                 font-weight: 600;
+                transition: color 1.5s ease;
+            }
+
+            body.night-mode .hero-date {
+                color: #9db8de;
             }
 
             .hero-location {
@@ -125,6 +235,11 @@
                 font-size: clamp(0.9rem, 1.8vw, 1.15rem);
                 letter-spacing: 0.12em;
                 color: #8a7e6b;
+                transition: color 1.5s ease;
+            }
+
+            body.night-mode .hero-location {
+                color: #c4b89e;
             }
 
             .hero-scroll-hint {
@@ -137,6 +252,11 @@
                 text-transform: uppercase;
                 color: #b8a88a;
                 animation: gentleBounce 2.5s ease-in-out infinite;
+                transition: color 1.5s ease;
+            }
+
+            body.night-mode .hero-scroll-hint {
+                color: #d4c9a8;
             }
 
 
@@ -156,6 +276,12 @@
                 -webkit-backdrop-filter: blur(12px);
                 border-bottom: 1px solid rgba(201, 178, 110, 0.25);
                 padding: 0 2rem;
+                transition: background 1.5s ease, border-color 1.5s ease;
+            }
+
+            body.night-mode .navbar {
+                background: rgba(18, 18, 40, 0.92);
+                border-bottom-color: rgba(201, 178, 110, 0.15);
             }
 
             .navbar-inner {
@@ -184,7 +310,11 @@
                 color: #3f5e88;
                 padding: 0.3rem 0;
                 border-bottom: 1.5px solid transparent;
-                transition: color 0.2s, border-color 0.2s;
+                transition: color 0.4s ease, border-color 0.2s;
+            }
+
+            body.night-mode .nav-links a {
+                color: #b0c4e0;
             }
 
             .nav-links a:hover {
@@ -233,6 +363,11 @@
                 align-items: center;
                 justify-content: center;
                 gap: 1.8rem;
+                transition: background 1.5s ease;
+            }
+
+            body.night-mode .mobile-menu {
+                background: rgba(18, 18, 40, 0.97);
             }
 
             .mobile-menu.open {
@@ -246,7 +381,11 @@
                 letter-spacing: 0.06em;
                 text-decoration: none;
                 color: #3f5e88;
-                transition: color 0.2s;
+                transition: color 0.4s ease;
+            }
+
+            body.night-mode .mobile-menu a {
+                color: #b0c4e0;
             }
 
             .mobile-menu a:hover {
@@ -291,6 +430,11 @@
                 color: #3f5e88;
                 margin-bottom: 2rem;
                 line-height: 1.3;
+                transition: color 1.5s ease;
+            }
+
+            body.night-mode .message-section h2 {
+                color: #c8d8f0;
             }
 
             .message-section p {
@@ -298,6 +442,11 @@
                 line-height: 2;
                 color: #5a5048;
                 margin-bottom: 1.2rem;
+                transition: color 1.5s ease;
+            }
+
+            body.night-mode .message-section p {
+                color: #c4bdb5;
             }
 
             .message-signature {
@@ -333,6 +482,11 @@
             .timeline-section {
                 padding: clamp(4rem, 10vw, 7rem) 1.5rem;
                 background: linear-gradient(180deg, #faf6f1 0%, #f3ede4 100%);
+                transition: background 1.5s ease;
+            }
+
+            body.night-mode .timeline-section {
+                background: linear-gradient(180deg, #141428 0%, #1a1a36 100%);
             }
 
             .timeline-section .section-label {
@@ -352,6 +506,11 @@
                 font-weight: 400;
                 color: #3f5e88;
                 margin-bottom: 4rem;
+                transition: color 1.5s ease;
+            }
+
+            body.night-mode .timeline-section .section-heading {
+                color: #c8d8f0;
             }
 
             .timeline {
@@ -417,6 +576,11 @@
                 color: #c9b26e;
                 z-index: 2;
                 box-shadow: 0 2px 12px rgba(201, 178, 110, 0.2);
+                transition: background 1.5s ease;
+            }
+
+            body.night-mode .timeline-dot {
+                background: #1a1a36;
             }
 
             .timeline-card {
@@ -426,7 +590,12 @@
                 padding: 2rem 2.2rem;
                 box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
                 border: 1px solid rgba(201, 178, 110, 0.15);
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                transition: transform 0.3s ease, box-shadow 0.3s ease, background 1.5s ease, border-color 1.5s ease;
+            }
+
+            body.night-mode .timeline-card {
+                background: rgba(30, 30, 60, 0.8);
+                border-color: rgba(201, 178, 110, 0.2);
             }
 
             .timeline-card:hover {
@@ -440,6 +609,11 @@
                 font-weight: 600;
                 color: #3f5e88;
                 margin-bottom: 0.6rem;
+                transition: color 1.5s ease;
+            }
+
+            body.night-mode .timeline-card h3 {
+                color: #c8d8f0;
             }
 
             .timeline-card .card-location {
@@ -691,13 +865,91 @@
             .envelope-parent.open .envelope-part.left   { transition-delay: 0.15s; }
             .envelope-parent.open .envelope-part.right  { transition-delay: 0.15s; }
             .envelope-parent.open .envelope-part.bottom { transition-delay: 0.3s; }
+
+            /* ---------- COUNTDOWN ---------- */
+            .countdown-section {
+                padding: clamp(3rem, 8vw, 5rem) 1.5rem;
+                text-align: center;
+                background: linear-gradient(180deg, #faf6f1 0%, #f5efe6 100%);
+                transition: background 1.5s ease;
+            }
+
+            body.night-mode .countdown-section {
+                background: linear-gradient(180deg, #141428 0%, #181832 100%);
+            }
+
+            .countdown-section .section-label {
+                font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+                letter-spacing: 0.25em;
+                text-transform: uppercase;
+                color: #c9b26e;
+                margin-bottom: 1.5rem;
+                font-weight: 600;
+            }
+
+            .countdown-boxes {
+                display: flex;
+                justify-content: center;
+                gap: clamp(0.6rem, 3vw, 2.5rem);
+                flex-wrap: nowrap;
+                margin-top: 1rem;
+            }
+
+            .countdown-box {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                min-width: 0;
+            }
+
+            .countdown-number {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: clamp(2.6rem, 6vw, 4.2rem);
+                font-weight: 600;
+                color: #3f5e88;
+                line-height: 1;
+                transition: color 1.5s ease;
+            }
+
+            body.night-mode .countdown-number {
+                color: #c8d8f0;
+            }
+
+            .countdown-label {
+                font-size: clamp(0.7rem, 1.4vw, 0.9rem);
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                color: #8a7e6b;
+                margin-top: 0.4rem;
+                font-weight: 500;
+                transition: color 1.5s ease;
+            }
+
+            body.night-mode .countdown-label {
+                color: #b0a890;
+            }
+
+            .countdown-separator {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: clamp(2rem, 4vw, 3rem);
+                color: #c9b26e;
+                align-self: flex-start;
+                margin-top: 0.2rem;
+                opacity: 0.6;
+                transition: color 1.5s ease;
+            }
         </style>
     </head>
     <body>
+        <button class="day-night-toggle" id="day-night-toggle" aria-label="დღე/ღამე">
+            <span class="toggle-knob"></span>
+        </button>
         <main class="page">
             <div class="page-content" id="page-contents">
                 <!-- HERO -->
                 <section class="hero">
+                    <div class="hero-bg day"></div>
+                    <div class="hero-bg night"></div>
                     <div class="hero-photo" aria-label="ფოტოს ადგილი">
                         <img src="couple2.png" alt="">
                     </div>
@@ -743,6 +995,34 @@
                         </button>
                     </div>
                 </nav>
+                <!-- COUNTDOWN -->
+                <section class="countdown-section">
+                    <div class="reveal">
+                        <p class="section-label">ქორწილამდე დარჩა</p>
+                        <div class="section-divider"></div>
+                    </div>
+                    <div class="countdown-boxes reveal" id="countdown">
+                        <div class="countdown-box">
+                            <span class="countdown-number" id="cd-days">--</span>
+                            <span class="countdown-label">დღე</span>
+                        </div>
+                        <span class="countdown-separator">:</span>
+                        <div class="countdown-box">
+                            <span class="countdown-number" id="cd-hours">--</span>
+                            <span class="countdown-label">საათი</span>
+                        </div>
+                        <span class="countdown-separator">:</span>
+                        <div class="countdown-box">
+                            <span class="countdown-number" id="cd-minutes">--</span>
+                            <span class="countdown-label">წუთი</span>
+                        </div>
+                        <span class="countdown-separator">:</span>
+                        <div class="countdown-box">
+                            <span class="countdown-number" id="cd-seconds">--</span>
+                            <span class="countdown-label">წამი</span>
+                        </div>
+                    </div>
+                </section>
                 <!-- Mobile menu overlay -->
                 <div class="mobile-menu" id="mobile-menu">
                     <a href="#">Home</a>
@@ -874,6 +1154,45 @@
             </div>
         </div>
         <script>
+            // Day/Night toggle
+            document.getElementById('day-night-toggle').addEventListener('click', function () {
+                document.body.classList.toggle('night-mode');
+            });
+
+            // Countdown
+            (function () {
+                var weddingDate = new Date('2026-09-06T14:00:00+04:00').getTime();
+                var cdDays = document.getElementById('cd-days');
+                var cdHours = document.getElementById('cd-hours');
+                var cdMinutes = document.getElementById('cd-minutes');
+                var cdSeconds = document.getElementById('cd-seconds');
+
+                function pad(n) { return n < 10 ? '0' + n : n; }
+
+                function updateCountdown() {
+                    var now = Date.now();
+                    var diff = weddingDate - now;
+                    if (diff <= 0) {
+                        cdDays.textContent = '0';
+                        cdHours.textContent = '00';
+                        cdMinutes.textContent = '00';
+                        cdSeconds.textContent = '00';
+                        return;
+                    }
+                    var d = Math.floor(diff / 86400000);
+                    var h = Math.floor((diff % 86400000) / 3600000);
+                    var m = Math.floor((diff % 3600000) / 60000);
+                    var s = Math.floor((diff % 60000) / 1000);
+                    cdDays.textContent = d;
+                    cdHours.textContent = pad(h);
+                    cdMinutes.textContent = pad(m);
+                    cdSeconds.textContent = pad(s);
+                }
+
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
+            })();
+
             // Envelope open
             document.getElementById('envelope').addEventListener('click', function () {
                 this.classList.add('open');
@@ -884,6 +1203,7 @@
                 setTimeout(function () {
                     document.body.style.overflow = 'auto';
                     document.getElementById('page-contents').classList.add('content-revealed');
+                    document.getElementById('day-night-toggle').classList.add('visible');
                 }, 1200);
             });
 
@@ -902,6 +1222,22 @@
                     hamburger.classList.remove('active');
                     mobileMenu.classList.remove('open');
                 });
+            });
+
+            // Parallax on scroll
+            var heroBgs = document.querySelectorAll('.hero-bg');
+
+            function handleParallax() {
+                var scrollY = window.pageYOffset;
+
+                // Hero background parallax (moves at 40% scroll speed)
+                heroBgs.forEach(function (bg) {
+                    bg.style.transform = 'translateY(' + (scrollY * 0.4) + 'px)';
+                });
+            }
+
+            window.addEventListener('scroll', function () {
+                requestAnimationFrame(handleParallax);
             });
 
             // Scroll reveal
