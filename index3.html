@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="ka">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>თამარ & თორნიკე</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Noto+Serif+Georgian:wght@400;500;600&display=swap" rel="stylesheet">
+        <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+        <style>
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+
+            body {
+                min-height: 100vh;
+                background-color: #c5b49a;
+                overflow: hidden;
+            }
+
+            /* ===== Content page revealed behind the envelope ===== */
+            .page-content {
+                visibility: hidden;
+                position: relative;
+                z-index: 0;
+                background-color: #faf6f1;
+                font-family: 'Noto Serif Georgian', 'Cormorant Garamond', serif;
+                color: #3a3028;
+            }
+
+            .page-content.bg-visible {
+                visibility: visible;
+            }
+
+            /* ---------- HERO ---------- */
+            .hero {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                text-align: center;
+                padding: 2rem 1.5rem;
+                overflow: hidden;
+                background: url('bg2.jpg') center center / cover no-repeat;
+            }
+
+            .hero::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: rgba(250, 246, 241, 0.72);
+                z-index: 0;
+            }
+
+            .hero > * {
+                position: relative;
+                z-index: 1;
+                opacity: 0;
+                transform: translateY(15px);
+                transition: opacity 3s ease, transform 2s ease;
+            }
+
+            .page-content.content-revealed .hero > * {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            @media (max-width: 768px) {
+                .hero {
+                    background-image: url('bg2-mobile.jpg');
+                }
+            }
+
+            .hero-photo {
+                width: 24rem;
+                margin-bottom: 2.5rem;
+
+            }
+
+            @media (max-width: 768px) {
+                .hero-photo {
+                    width: 12rem;
+                }
+            }
+
+            .hero-photo img {
+                width:100%;
+                height: fit-content;
+            }
+
+            .hero-names {
+                font-family: 'Cormorant Garamond', 'Noto Serif Georgian', serif;
+                font-size: clamp(2.8rem, 6vw, 5rem);
+                font-weight: 300;
+                letter-spacing: 0.06em;
+                line-height: 1.15;
+                color: #3f5e88;
+            }
+
+            .hero-names .amp {
+                display: block;
+                font-size: 0.5em;
+                font-style: italic;
+                letter-spacing: 0.15em;
+                color: #c9b26e;
+                margin: 0.15em 0;
+            }
+
+            .hero-date {
+                margin-top: 1.5rem;
+                font-size: clamp(0.95rem, 2vw, 1.3rem);
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                color: #5f7ca5;
+                font-weight: 600;
+            }
+
+            .hero-location {
+                margin-top: 0.4rem;
+                font-size: clamp(0.9rem, 1.8vw, 1.15rem);
+                letter-spacing: 0.12em;
+                color: #8a7e6b;
+            }
+
+            .hero-scroll-hint {
+                position: absolute;
+                bottom: 2rem;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 0.85rem;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                color: #b8a88a;
+                animation: gentleBounce 2.5s ease-in-out infinite;
+            }
+
+
+
+            @keyframes gentleBounce {
+                0%, 100% { transform: translateX(-50%) translateY(0); }
+                50% { transform: translateX(-50%) translateY(-8px); }
+            }
+
+            /* ---------- NAVBAR ---------- */
+            .navbar {
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                background: rgba(241, 241, 242, 0.92);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-bottom: 1px solid rgba(201, 178, 110, 0.25);
+                padding: 0 2rem;
+            }
+
+            .navbar-inner {
+                max-width: 960px;
+                margin: 0 auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 3.6rem;
+            }
+
+            .nav-links {
+                display: flex;
+                gap: 2rem;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            .nav-links a {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 1.05rem;
+                font-weight: 600;
+                letter-spacing: 0.05em;
+                text-decoration: none;
+                color: #3f5e88;
+                padding: 0.3rem 0;
+                border-bottom: 1.5px solid transparent;
+                transition: color 0.2s, border-color 0.2s;
+            }
+
+            .nav-links a:hover {
+                color: #2f4f7d;
+                border-color: #c9b26e;
+            }
+
+            /* Hamburger */
+            .hamburger {
+                display: none;
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0.5rem;
+                z-index: 110;
+            }
+
+            .hamburger span {
+                display: block;
+                width: 24px;
+                height: 2px;
+                background: #3f5e88;
+                margin: 5px 0;
+                border-radius: 2px;
+                transition: transform 0.3s, opacity 0.3s;
+            }
+
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 5px);
+            }
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(5px, -5px);
+            }
+
+            /* Mobile menu overlay */
+            .mobile-menu {
+                display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 105;
+                background: rgba(241, 241, 242, 0.97);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 1.8rem;
+            }
+
+            .mobile-menu.open {
+                display: flex;
+            }
+
+            .mobile-menu a {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 1.6rem;
+                font-weight: 600;
+                letter-spacing: 0.06em;
+                text-decoration: none;
+                color: #3f5e88;
+                transition: color 0.2s;
+            }
+
+            .mobile-menu a:hover {
+                color: #c9b26e;
+            }
+
+            @media (max-width: 768px) {
+                .nav-links {
+                    display: none;
+                }
+                .hamburger {
+                    display: block;
+                    position: absolute;
+                    right: 1.5rem;
+                }
+                .navbar-inner {
+                    justify-content: flex-start;
+                }
+            }
+
+            /* ---------- MESSAGE SECTION ---------- */
+            .message-section {
+                padding: clamp(4rem, 10vw, 8rem) 1.5rem;
+                text-align: center;
+                max-width: 750px;
+                margin: 0 auto;
+            }
+
+            .message-section .section-label {
+                font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+                letter-spacing: 0.25em;
+                text-transform: uppercase;
+                color: #c9b26e;
+                margin-bottom: 1.5rem;
+                font-weight: 600;
+            }
+
+            .message-section h2 {
+                font-family: 'Cormorant Garamond', 'Noto Serif Georgian', serif;
+                font-size: clamp(1.8rem, 4vw, 2.8rem);
+                font-weight: 400;
+                color: #3f5e88;
+                margin-bottom: 2rem;
+                line-height: 1.3;
+            }
+
+            .message-section p {
+                font-size: clamp(1rem, 1.8vw, 1.2rem);
+                line-height: 2;
+                color: #5a5048;
+                margin-bottom: 1.2rem;
+            }
+
+            .message-signature {
+                margin-top: 2.5rem;
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 1.3rem;
+                font-style: italic;
+                color: #8a7e6b;
+            }
+
+            /* ---------- SCROLL REVEAL ---------- */
+            .reveal {
+                opacity: 0;
+                transform: translateY(40px);
+                transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                            transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            }
+
+            .reveal.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            /* Decorative divider */
+            .section-divider {
+                width: 60px;
+                height: 1px;
+                background: linear-gradient(to right, transparent, #c9b26e, transparent);
+                margin: 0 auto 2rem;
+            }
+
+            /* ---------- TIMELINE / STEPS ---------- */
+            .timeline-section {
+                padding: clamp(4rem, 10vw, 7rem) 1.5rem;
+                background: linear-gradient(180deg, #faf6f1 0%, #f3ede4 100%);
+            }
+
+            .timeline-section .section-label {
+                text-align: center;
+                font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+                letter-spacing: 0.25em;
+                text-transform: uppercase;
+                color: #c9b26e;
+                margin-bottom: 1rem;
+                font-weight: 600;
+            }
+
+            .timeline-section .section-heading {
+                text-align: center;
+                font-family: 'Cormorant Garamond', 'Noto Serif Georgian', serif;
+                font-size: clamp(1.8rem, 4vw, 2.8rem);
+                font-weight: 400;
+                color: #3f5e88;
+                margin-bottom: 4rem;
+            }
+
+            .timeline {
+                position: relative;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 0;
+            }
+
+            /* Vertical line */
+            .timeline::before {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 0;
+                bottom: 0;
+                width: 1px;
+                background: linear-gradient(to bottom, transparent, #c9b26e 10%, #c9b26e 90%, transparent);
+                transform: translateX(-50%);
+            }
+
+            .timeline-step {
+                position: relative;
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 4rem;
+            }
+
+            .timeline-step:last-child {
+                margin-bottom: 0;
+            }
+
+            /* Alternate sides */
+            .timeline-step:nth-child(odd) {
+                flex-direction: row;
+                padding-right: calc(50% + 2.5rem);
+                text-align: right;
+            }
+
+            .timeline-step:nth-child(even) {
+                flex-direction: row-reverse;
+                padding-left: calc(50% + 2.5rem);
+                text-align: left;
+            }
+
+            /* Circle on the line */
+            .timeline-dot {
+                position: absolute;
+                left: 50%;
+                top: 0.5rem;
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                background: #faf6f1;
+                border: 2px solid #c9b26e;
+                transform: translateX(-50%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #c9b26e;
+                z-index: 2;
+                box-shadow: 0 2px 12px rgba(201, 178, 110, 0.2);
+            }
+
+            .timeline-card {
+                flex: 1;
+                background: #fff;
+                border-radius: 12px;
+                padding: 2rem 2.2rem;
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+                border: 1px solid rgba(201, 178, 110, 0.15);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .timeline-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            }
+
+            .timeline-card h3 {
+                font-family: 'Cormorant Garamond', 'Noto Serif Georgian', serif;
+                font-size: clamp(1.4rem, 3vw, 1.8rem);
+                font-weight: 600;
+                color: #3f5e88;
+                margin-bottom: 0.6rem;
+            }
+
+            .timeline-card .card-location {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+                color: #8a7e6b;
+                letter-spacing: 0.03em;
+            }
+
+            .timeline-step:nth-child(odd) .card-location {
+                justify-content: flex-end;
+            }
+
+            .card-location-icon {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+                opacity: 0.6;
+            }
+
+            /* Mobile: stack vertically, line on left */
+            @media (max-width: 768px) {
+                .timeline::before {
+                    left: 20px;
+                }
+
+                .timeline-step:nth-child(odd),
+                .timeline-step:nth-child(even) {
+                    flex-direction: row;
+                    padding-left: 3.5rem;
+                    padding-right: 0;
+                    text-align: left;
+                }
+
+                .timeline-dot {
+                    left: 20px;
+                }
+
+                .timeline-step:nth-child(odd) .card-location {
+                    justify-content: flex-start;
+                }
+
+                .timeline-card {
+                    padding: 1.5rem;
+                }
+            }
+
+            /* Wax seal */
+            .wax {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 5;
+                transition: opacity 0.8s ease, transform 0.5s ease;
+                pointer-events: none;
+            }
+
+            .wax img {
+                width: 20rem;
+                height: auto;
+                display: block;
+            }
+
+            @media (max-width: 768px) {
+                .wax img {
+                    width: 12rem;
+                }
+            }
+
+            .envelope-parent.open .wax {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1.01);
+            }
+
+            /* ---------- TIMELINE POPUP ---------- */
+            .popup-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 200;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.35);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.25s ease;
+            }
+
+            .popup-overlay.active {
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            .popup {
+                background: #fff;
+                border-radius: 16px;
+                padding: 2.2rem 2.4rem;
+                max-width: 420px;
+                width: calc(100% - 3rem);
+                box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+                border-top: 3px solid #c9b26e;
+                transform: translateY(20px) scale(0.97);
+                transition: transform 0.25s ease, opacity 0.25s ease;
+                opacity: 0;
+                font-family: 'Noto Serif Georgian', 'Cormorant Garamond', serif;
+            }
+
+            .popup-overlay.active .popup {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            .popup-title {
+                font-family: 'Cormorant Garamond', 'Noto Serif Georgian', serif;
+                font-size: 1.6rem;
+                font-weight: 600;
+                color: #3f5e88;
+                margin-bottom: 0.4rem;
+            }
+
+            .popup-location {
+                font-size: 0.9rem;
+                color: #c9b26e;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                margin-bottom: 1.2rem;
+                font-weight: 600;
+            }
+
+            .popup-body {
+                font-size: 1rem;
+                line-height: 1.8;
+                color: #5a5048;
+            }
+
+            .popup-close {
+                margin-top: 1.5rem;
+                display: inline-block;
+                font-size: 0.85rem;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                color: #b8a88a;
+                cursor: pointer;
+                border: none;
+                background: none;
+                font-family: inherit;
+                padding: 0;
+            }
+
+            .popup-close:hover {
+                color: #3f5e88;
+            }
+
+            .timeline-card {
+                cursor: pointer;
+            }
+
+            /* Envelope overlay */
+            .envelope-parent {
+
+                position: fixed;
+                inset: 0;
+                z-index: 10;
+                cursor: pointer;
+                overflow: hidden;
+            }
+
+            .envelope-part {
+
+                position: absolute;
+                width: 0;
+                height: 0;
+                box-sizing: content-box;
+                transition: transform 3s cubic-bezier(0.4, 0, 0.2, 1),
+                            opacity 3s ease;
+            }
+
+            /* Top flap — uses 50vw left/right borders, 50vh top border */
+            .envelope-part.top {
+                z-index: 3;
+                top: 0;
+                left: 0;
+                border-left: 50vw solid transparent;
+                border-right: 50vw solid transparent;
+                border-top: 50vh solid #e8ddd2;
+                filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.22));
+            }
+
+            /* Bottom flap — upward-pointing triangle */
+            .envelope-part.bottom {
+                z-index: 1;
+                bottom: 0;
+                left: 0;
+                border-left: 50vw solid transparent;
+                border-right: 50vw solid transparent;
+                border-bottom: 50vh solid #ddd3c6;
+            }
+
+            /* Left flap — right-pointing triangle */
+            .envelope-part.left {
+                z-index: 2;
+                top: 0;
+                left: 0;
+                border-top: 50vh solid transparent;
+                border-bottom: 50vh solid transparent;
+                border-left: 50vw solid #e4d9ce;
+                filter: drop-shadow(4px 0 6px rgba(0, 0, 0, 0.15));
+            }
+
+            /* Right flap — left-pointing triangle */
+            .envelope-part.right {
+                z-index: 2;
+                top: 0;
+                right: 0;
+                border-top: 50vh solid transparent;
+                border-bottom: 50vh solid transparent;
+                border-right: 50vw solid #e4d9ce;
+                filter: drop-shadow(-4px 0 6px rgba(0, 0, 0, 0.15));
+            }
+
+            /* ---- Open states ---- */
+            .envelope-parent.open .envelope-part.top {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            .envelope-parent.open .envelope-part.bottom {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            .envelope-parent.open .envelope-part.left {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            .envelope-parent.open .envelope-part.right {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            /* After animation, remove pointer-events so content is interactive */
+            .envelope-parent.open {
+                pointer-events: none;
+            }
+
+            /* Stagger the flaps slightly */
+            .envelope-parent.open .envelope-part.top    { transition-delay: 0s; }
+            .envelope-parent.open .envelope-part.left   { transition-delay: 0.15s; }
+            .envelope-parent.open .envelope-part.right  { transition-delay: 0.15s; }
+            .envelope-parent.open .envelope-part.bottom { transition-delay: 0.3s; }
+        </style>
+    </head>
+    <body>
+        <main class="page">
+            <div class="page-content" id="page-contents">
+                <!-- HERO -->
+                <section class="hero">
+                    <div class="hero-photo" aria-label="ფოტოს ადგილი">
+                        <img src="couple2.png" alt="">
+                    </div>
+                    <h1 class="hero-names">
+                        თამარი
+                        <span class="amp">&amp;</span>
+                        თორნიკე
+                    </h1>
+                    <p class="hero-date">6 სექტემბერი, 2026</p>
+                    <p class="hero-location">თბილისი, საქართველო</p>
+                    <span class="hero-scroll-hint">↓</span>
+                </section>
+                <!-- NAVBAR -->
+                <nav class="navbar">
+                    <div class="navbar-inner">
+                        <ul class="nav-links">
+                            <li>
+                                <a href="#">Home</a>
+                            </li>
+                            <li>
+                                <a href="#">Our Story</a>
+                            </li>
+                            <li>
+                                <a href="#">Photos</a>
+                            </li>
+                            <li>
+                                <a href="#">Wedding Party</a>
+                            </li>
+                            <li>
+                                <a href="#">Travel</a>
+                            </li>
+                            <li>
+                                <a href="#">Things to Do</a>
+                            </li>
+                            <li>
+                                <a href="#">Registry</a>
+                            </li>
+                        </ul>
+                        <button class="hamburger" id="hamburger" aria-label="მენიუ">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                    </div>
+                </nav>
+                <!-- Mobile menu overlay -->
+                <div class="mobile-menu" id="mobile-menu">
+                    <a href="#">Home</a>
+                    <a href="#">Our Story</a>
+                    <a href="#">Photos</a>
+                    <a href="#">Wedding Party</a>
+                    <a href="#">Travel</a>
+                    <a href="#">Things to Do</a>
+                    <a href="#">Registry</a>
+                </div>
+                <!-- MESSAGE FROM US -->
+                <section class="message-section">
+                    <div class="reveal">
+                        <p class="section-label">ჩვენგან თქვენთვის</p>
+                        <div class="section-divider"></div>
+                        <h2>ძვირფასო სტუმრებო</h2>
+                    </div>
+                    <div class="reveal">
+                        <p>
+                            ჩვენი სიყვარულის ისტორიას ახალი, ულამაზესი თავი ემატება და ჩვენთვის დიდი ბედნიერებაა, რომ ამ განსაკუთრებულ დღეს თქვენთან ერთად გავიზიარებთ.
+                        </p>
+                        <p>
+                            გვინდა, რომ ეს დღე არა მხოლოდ ჩვენი, არამედ ყველა იმ ადამიანის იყოს, ვინც ჩვენს გვერდით იდგა, გვიყვარდა და გვხარობდა. მოდით, ერთად შევქმნათ უმშვენიერესი მოგონებები.
+                        </p>
+                    </div>
+                    <div class="reveal">
+                        <p class="message-signature">სიყვარულით, თამარი & თორნიკე</p>
+                    </div>
+                </section>
+                <!-- TIMELINE / STEPS -->
+                <section class="timeline-section">
+                    <div class="reveal">
+                        <p class="section-label">დღის გეგმა</p>
+                        <div class="section-divider"></div>
+                        <h2 class="section-heading">ჩვენი განსაკუთრებული დღე</h2>
+                    </div>
+                    <div class="timeline">
+                        <!-- Step 1 -->
+                        <div class="timeline-step reveal">
+                            <div class="timeline-dot">1</div>
+                            <div class="timeline-card" data-popup="1">
+                                <h3>ჯვრისწერა</h3>
+                                <p class="card-location">
+                                    <svg
+                                        class="card-location-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    ჯვრის მონასტერი
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="timeline-step reveal">
+                            <div class="timeline-dot">2</div>
+                            <div class="timeline-card" data-popup="2">
+                                <h3>ფოტოსესია</h3>
+                                <p class="card-location">
+                                    <svg
+                                        class="card-location-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    სასტუმრო ბილტმორი
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="timeline-step reveal">
+                            <div class="timeline-dot">3</div>
+                            <div class="timeline-card" data-popup="3">
+                                <h3>ვახშამი</h3>
+                                <p class="card-location">
+                                    <svg
+                                        class="card-location-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    გარდენ ჰოლი
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="envelope-parent" id="envelope">
+                <div class="wax">
+                    <img src="wax.png" alt="">
+                </div>
+                <div class="envelope-part top"></div>
+                <div class="envelope-part right"></div>
+                <div class="envelope-part bottom"></div>
+                <div class="envelope-part left"></div>
+            </div>
+        </main>
+        <!-- Timeline popups -->
+        <div class="popup-overlay" id="popup-overlay">
+            <div
+                class="popup"
+                id="popup-box"
+                role="dialog"
+                aria-modal="true"
+            >
+                <p class="popup-title" id="popup-title"></p>
+                <p class="popup-location" id="popup-location"></p>
+                <p class="popup-body" id="popup-body"></p>
+                <button class="popup-close" id="popup-close">დახურვა &times;</button>
+            </div>
+        </div>
+        <script>
+            // Envelope open
+            document.getElementById('envelope').addEventListener('click', function () {
+                this.classList.add('open');
+                // Show background immediately so it's visible behind opening envelope
+                document.getElementById('page-contents').classList.add('bg-visible');
+
+                // Fade in content after delay
+                setTimeout(function () {
+                    document.body.style.overflow = 'auto';
+                    document.getElementById('page-contents').classList.add('content-revealed');
+                }, 1200);
+            });
+
+            // Hamburger menu
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            hamburger.addEventListener('click', function () {
+                this.classList.toggle('active');
+                mobileMenu.classList.toggle('open');
+            });
+
+            // Close mobile menu on link click
+            mobileMenu.querySelectorAll('a').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    hamburger.classList.remove('active');
+                    mobileMenu.classList.remove('open');
+                });
+            });
+
+            // Scroll reveal
+            const revealElements = document.querySelectorAll('.reveal');
+
+            function checkReveal() {
+                var windowHeight = window.innerHeight;
+                revealElements.forEach(function (el) {
+                    var top = el.getBoundingClientRect().top;
+                    if (top < windowHeight - 80) {
+                        el.classList.add('visible');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', checkReveal);
+            window.addEventListener('resize', checkReveal);
+            // Initial check after envelope opens
+            document.getElementById('envelope').addEventListener('transitionend', checkReveal);
+
+            // Timeline popups
+            var popupData = {
+                '1': {
+                    title: 'ჯვრისწერა',
+                    location: 'ჯვრის მონასტერი',
+                    body: 'ჯვრისწერა გაიმართება ჯვრის მონასტერში. გთხოვთ, 14:00 საათისთვის იყოთ ადგილზე. ტაძარი მდებარეობს მცხეთაში, თბილისიდან 20 კმ-ის დაშორებით.'
+                },
+                '2': {
+                    title: 'ფოტოსესია',
+                    location: 'სასტუმრო ბილტმორი',
+                    body: 'ქორწილის ფოტოსესია გაიმართება სასტუმრო ბილტმორის მიმდებარე ტერიტორიაზე. სტუმრებს შეუძლიათ ამ დროს ისარგებლონ სასტუმროს ლობიით.'
+                },
+                '3': {
+                    title: 'სადილობა / ვახშამი',
+                    location: 'გარდენ ჰოლი',
+                    body: 'ვახშამი დაიწყება 19:00 საათზე გარდენ ჰოლში. გთხოვთ, ადგილის დადასტურება გააკეთოთ წინასწარ. ნებისმიერი დიეტური შეზღუდვის შემთხვევაში გვაცნობეთ.'
+                }
+            };
+
+            var popupOverlay = document.getElementById('popup-overlay');
+            var popupTitle = document.getElementById('popup-title');
+            var popupLocation = document.getElementById('popup-location');
+            var popupBody = document.getElementById('popup-body');
+
+            function openPopup(id) {
+                var data = popupData[id];
+                if (!data) return;
+                popupTitle.textContent = data.title;
+                popupLocation.textContent = data.location;
+                popupBody.textContent = data.body;
+                popupOverlay.classList.add('active');
+            }
+
+            function closePopup() {
+                popupOverlay.classList.remove('active');
+            }
+
+            document.querySelectorAll('.timeline-card').forEach(function (card) {
+                card.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    openPopup(this.dataset.popup);
+                });
+            });
+
+            document.getElementById('popup-box').addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+
+            document.getElementById('popup-close').addEventListener('click', closePopup);
+
+            popupOverlay.addEventListener('click', closePopup);
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closePopup();
+            });
+        </script>
+    </body>
+</html>
